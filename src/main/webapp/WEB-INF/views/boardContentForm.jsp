@@ -9,10 +9,10 @@
 <c:if test="${empty requestScope.board}">
 	<script>
 		alert("게시판 글이 삭제되었음!");
-		location.replace("/z_jsp/boardListForm.do");
+		location.replace("/erp/boardListForm.do");
 	</script>
 </c:if>
-<script src="/z_jsp/resources/jquery-1.11.0.min.js"></script>
+<script src="/erp/resources/jquery-1.11.0.min.js"></script>
 <script>
 </script>
 <script>
@@ -33,7 +33,7 @@
 <body>
 <br>
 <center>
-<form class="boardContentForm" name="boardContentForm" method="post" action="/z_jsp/boardRegForm.do">
+<form class="boardContentForm" name="boardContentForm" method="post" action="/erp/boardRegForm.do">
 	<b>[글 상세보기]</b>
 	<table class="tbcss1" width = "500" border="1" bordercolor="#DDDDDD" cellpadding="5" align="center">
 		<tr align="center">
@@ -62,19 +62,19 @@
 	<input type="button" value="댓글달기" onClick="goBoardRegForm()">&nbsp;
 	<input type="button" value="수정/삭제" onClick="goBoardUpDelForm()">&nbsp;
 	</form>
-	<form name="boardListForm" method="post" action="/z_jsp/boardListForm.do">
+	<form name="boardListForm" method="post" action="/erp/boardListForm.do">
 	<!-- 	
 	<input type="hidden" name="keyword1" value="${param.keyword1}">
 	<input type="hidden" name="keyword2" value="${param.keyword2}">
 	<input type="hidden" name="or_and" value="${param.or_and}">
 	 -->
 	</form>
-	<form name="boardRegForm" method="post" action="/z_jsp/boardRegForm.do">
+	<form name="boardRegForm" method="post" action="/erp/boardRegForm.do">
 		<!-- 게시판 상세보기 화면을 구성하는 글의 고유번호를 hidden 태그에 저장한다 -->
 		<!-- 댓글을 달려면 주인글의 고유번호를 알아야하기 때문이다. -->
 		<input type="hidden" name="b_no" value="${board.b_no }">	
 	</form>
-	<form name="boardUpDelForm" method="post" action="/z_jsp/boardUpDelForm.do">
+	<form name="boardUpDelForm" method="post" action="/erp/boardUpDelForm.do">
 		<!-- 게시판 상세보기 화면을 구성하는 글의 고유번호를 hidden 태그에 저장한다 -->
 		<!-- 수정/삭제를 하려면 현재 글의 고유번호를 알아야하기 때문이다. -->
 		<input type="hidden" name="b_no" value="${board.b_no}">	

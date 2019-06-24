@@ -16,4 +16,8 @@ public interface BoardDAO {
 
 	int getBoardListAllCnt();
 
+	BoardDTO getBoardDTO(int b_no);
+
+	int updateReadcount(int b_no);
+
 }

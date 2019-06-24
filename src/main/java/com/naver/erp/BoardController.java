@@ -104,4 +104,21 @@ public class BoardController {
 	}
 	
 	
+	@RequestMapping(value="/boardContentForm.do", method=RequestMethod.POST,produces="application/json;charset=UTF-8")
+	public ModelAndView goBoardContentForm(
+		@RequestParam(value="b_no") int b_no) {
+		
+		// ModelAndView객체 생성하기
+		// ModelAndView객체에 호출 JSP 페이지명을 저장하기
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("boardContentForm.jsp");
+		try {
+			BoardDTO boardDTO = this.boardService.getBoardDTO(b_no);
+			mav.addObject("board",boardDTO);
+		}catch(Exception e){
+			System.out.println("BoardController.goBoardContentForm(~) 메소드 예외 발생");
+		}
+		return mav;
+	}
+	
 }

@@ -78,4 +78,26 @@
 			count(*)
 		from board
 	</select>
+	<select id= "getBoardDTO" parameterType="int" resultType="com.naver.erp.BoardDTO">
+		select
+			b_no||'' as "b_no",
+			subject as "subject",
+			writer as "writer",
+			to_char(reg_date,'YYYY-MM-DD') "reg_date",
+			readcount||'' as "readcount",
+			content as "content",
+			pwd as "pwd",
+			email as "email",
+			group_no||'' as "group_no",
+			print_no||'' as "print_no",
+			print_level||'' as "print_level"
+		from board
+		where b_no = #{b_no}
+	</select>
+	<update id="updateReadcount" parameterType="int">
+		update board
+		set
+			readcount = readcount+1
+		where b_no = #{b_no}
+	</update>
 </mapper>

@@ -11,4 +11,6 @@ public interface BoardService {
 	List<Map<String, String>> getBoardList();
 
 	int getBoardListAllCnt();
+
+	BoardDTO getBoardDTO(int b_no);
 }

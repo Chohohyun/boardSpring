@@ -67,4 +67,17 @@ public class BoardDAOImpl implements BoardDAO{
 		return boardListAllCnt;
 	}
 
+	public BoardDTO getBoardDTO(int b_no) {
+		System.out.println("getBoardDTO 까진됨");
+		System.out.println(b_no);
+		BoardDTO boardDTO = this.sqlSession.selectOne("com.naver.erp.BoardDAO.getBoardDTO",b_no);
+		System.out.println("getBoardDTO 까진됨2");
+		return boardDTO;
+	}
+
+	public int updateReadcount(int b_no) {
+		int updateReadcount = this.sqlSession.update("com.naver.erp.BoardDAO.updateReadcount",b_no);
+		return updateReadcount;
+	}
+
 }

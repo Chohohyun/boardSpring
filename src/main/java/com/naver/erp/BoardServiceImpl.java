@@ -31,14 +31,29 @@ public class BoardServiceImpl implements BoardService{
 		return boardRegCnt;
 	}
 	
+	// 로그인하면 나올 게시판 얻어오기
 	public List<Map<String,String>> getBoardList(){
 		List<Map<String,String>> boardList = this.boardDAO.getBoardList();
 		return boardList;
 	}
 
+	// 로그인하면 출력할 총 갯수
 	public int getBoardListAllCnt() {
 		int boardListAllCnt = this.boardDAO.getBoardListAllCnt();
 		return boardListAllCnt;
+	}
+	
+	// 상세보기 들어가기
+	public BoardDTO getBoardDTO(int b_no) {
+		BoardDTO boardDTO = this.boardDAO.getBoardDTO(b_no);
+		System.out.println("여긴됐따");
+		if(boardDTO!=null) {
+			System.out.println("여긴 되나?");
+			int readcount = this.boardDAO.updateReadcount(b_no);
+
+			System.out.println("여긴 되나?2");
+		}
+		return boardDTO;
 	}
 }
 
