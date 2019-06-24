@@ -1,5 +1,8 @@
 package com.naver.erp;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,7 +36,10 @@ public class BoardController {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardListForm.jsp");
 		try {
-			
+			int boardListAllCnt = this.boardService.getBoardListAllCnt();
+			List<Map<String,String>> boardList = this.boardService.getBoardList();
+			mav.addObject("boardList",boardList);
+			mav.addObject("boardListAllCnt",boardListAllCnt);
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("ContactController.getBoardList(~)메소드 호출 시 에러 발생");

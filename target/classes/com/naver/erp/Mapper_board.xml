@@ -57,4 +57,25 @@
 		</if> 
 		)
 	</insert>
+	<select id = "getBoardList" resultType="hashmap">
+		select
+			b_no||'' as "b_no",
+			subject as "subject",
+			writer as "writer",
+			to_char(reg_date,'YYYY-MM-DD') "reg_date",
+			readcount||'' as "readcount",
+			content as "content",
+			pwd as "pwd",
+			email as "email",
+			group_no||'' as "group_no",
+			print_no||'' as "print_no",
+			print_level||'' as "print_level"
+		from board
+		order by group_no desc,print_no asc
+	</select>
+	<select id = "getBoardListAllCnt" resultType="int">
+		select 
+			count(*)
+		from board
+	</select>
 </mapper>

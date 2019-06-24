@@ -1,5 +1,6 @@
 package com.naver.erp;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,16 @@ public class BoardServiceImpl implements BoardService{
 		}
 		int boardRegCnt = this.boardDAO.insertBoard(boardDTO);
 		return boardRegCnt;
+	}
+	
+	public List<Map<String,String>> getBoardList(){
+		List<Map<String,String>> boardList = this.boardDAO.getBoardList();
+		return boardList;
+	}
+
+	public int getBoardListAllCnt() {
+		int boardListAllCnt = this.boardDAO.getBoardListAllCnt();
+		return boardListAllCnt;
 	}
 }
 

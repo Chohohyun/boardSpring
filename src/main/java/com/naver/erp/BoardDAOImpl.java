@@ -1,5 +1,6 @@
 package com.naver.erp;
 
+import java.util.List;
 import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
@@ -54,6 +55,16 @@ public class BoardDAOImpl implements BoardDAO{
 		int boardRegCnt = this.sqlSession.insert("com.naver.erp.BoardDAO.insertBoard",boardDTO);
 		System.out.println(boardRegCnt);
 		return boardRegCnt;
+	}
+
+	public List<Map<String, String>> getBoardList() {
+		List<Map<String, String>> boardList = this.sqlSession.selectList("com.naver.erp.BoardDAO.getBoardList");
+		return boardList;
+	}
+
+	public int getBoardListAllCnt() {
+		int boardListAllCnt = this.sqlSession.selectOne("com.naver.erp.BoardDAO.getBoardListAllCnt");
+		return boardListAllCnt;
 	}
 
 }
