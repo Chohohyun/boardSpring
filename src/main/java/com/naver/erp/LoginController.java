@@ -98,6 +98,7 @@ public class LoginController {
 			) {
 		int admin_idCnt=0;
 		try {
+			session.removeAttribute("uri");
 			admin_idCnt = this.loginService.getAdminCnt(paramsMap);
 			if(admin_idCnt==1) {
 				session.setAttribute("admin_id", paramsMap.get("admin_id"));

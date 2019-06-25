@@ -57,7 +57,12 @@
 		</if> 
 		)
 	</insert>
-	<select id = "getBoardList" resultType="hashmap">
+	
+	<!--  조건에 맞는 게시판 가져오기 -->
+	<select id = "getBoardList" parameterType="com.naver.erp.BoardSearchDTO" resultType="hashmap">
+		select 
+			*
+		from (select zzz.*, rownum||'' RNUM from (
 		select
 			b_no||'' as "b_no",
 			subject as "subject",
@@ -70,14 +75,125 @@
 			group_no||'' as "group_no",
 			print_no||'' as "print_no",
 			print_level||'' as "print_level"
-		from board
+		from board b
+		where 1=1
+		<if test="date!=null"> 
+				and(
+			 	b.group_no in (select group_no from board where
+				<foreach collection="date" item="item" index="index">
+					<if test="index>0">
+						or 
+					</if>
+					<choose>
+						<when test="item.equals('today')">
+					 		to_char(reg_date,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd')
+						</when>
+						<when test="item.equals('yesterday')">
+					 		to_char(reg_date,'yyyy-mm-dd') = to_char(sysdate-1,'yyyy-mm-dd')
+						</when>
+					</choose> 
+				</foreach>
+				))  
+		</if> 
+		<if test="(keyword1!=null and keyword1.length()>0) or  (keyword2!=null and keyword2.length()>0)">
+				and (
+					<choose>
+					<when test="keyword1!=null and keyword1.length()>0">
+						b.group_no in (select group_no from board where (upper(subject) like upper( '%${keyword1}%')
+						 or upper(writer) like upper( '%${keyword1}%') 
+						 or upper(content) like upper( '%${keyword1}%')
+						 or upper(email) like upper( '%${keyword1}%') 
+						 or upper(to_char(reg_date,'YYYY-MM-DD AM HH:MI:SS')) like upper( '%${keyword1}%'))
+						 
+					</when>
+					<when test="keyword2!=null and keyword2.length()>0">
+						 b.group_no in (select group_no from board where
+					</when>
+					
+					</choose>
+					<if test="keyword1!=null and keyword1.length()>0 and  keyword2!=null and keyword2.length()>0">
+						${or_and}
+					</if>
+					<if test="keyword2!=null and keyword2.length()>0">
+						 (upper(subject) like upper( '%${keyword2}%')
+						 or upper(writer) like upper( '%${keyword2}%')
+						  or upper(content) like upper( '%${keyword2}%')
+						  or upper(email) like upper( '%${keyword2}%') 
+						   or upper(to_char(reg_date,'YYYY-MM-DD AM HH:MI:SS')) like upper( '%${keyword2}%'))
+					</if>
+					<if test="(keyword1!=null and keyword1.length()>0) or (keyword2!=null and keyword2.length()>0)">
+					 	))
+				</if>  
+			</if>
 		order by group_no desc,print_no asc
+		 ) zzz)  where RNUM>= ${selectPageNo} * ${rowCntPerPage} - ${rowCntPerPage} +1 and RNUM &lt;= ${selectPageNo} * ${rowCntPerPage}
+		 
+		 
+		 
+		 
 	</select>
-	<select id = "getBoardListAllCnt" resultType="int">
+	
+	
+	
+	
+	<!--  조건에 맞는 전체 행 수 -->
+	<select id = "getBoardListAllCnt" parameterType="com.naver.erp.BoardSearchDTO" resultType="int">
 		select 
 			count(*)
-		from board
+			from board b
+		 	where 1=1
+		 	<if test="date!=null"> 
+				and(
+			 	b.group_no in (select group_no from board where
+				<foreach collection="date" item="item" index="index">
+					<if test="index>0">
+						or 
+					</if>
+					<choose>
+						<when test="item.equals('today')">
+					 		to_char(reg_date,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd')
+						</when>
+						<when test="item.equals('yesterday')">
+					 		to_char(reg_date,'yyyy-mm-dd') = to_char(sysdate-1,'yyyy-mm-dd')
+						</when>
+					</choose> 
+				</foreach>
+				))  
+			</if> 
+			<if test="(keyword1!=null and keyword1.length()>0) or  (keyword2!=null and keyword2.length()>0)">
+				and (
+					<choose>
+					<when test="keyword1!=null and keyword1.length()>0">
+						b.group_no in (select group_no from board where (upper(subject) like upper( '%${keyword1}%')
+						 or upper(writer) like upper( '%${keyword1}%') 
+						 or upper(content) like upper( '%${keyword1}%')
+						 or upper(email) like upper( '%${keyword1}%') 
+						 or upper(to_char(reg_date,'YYYY-MM-DD AM HH:MI:SS')) like upper( '%${keyword1}%'))
+						 
+					</when>
+					<when test="keyword2!=null and keyword2.length()>0">
+						 b.group_no in (select group_no from board where
+					</when>
+					
+					</choose>
+					<if test="keyword1!=null and keyword1.length()>0 and  keyword2!=null and keyword2.length()>0">
+						${or_and}
+					</if>
+					<if test="keyword2!=null and keyword2.length()>0">
+						 (upper(subject) like upper( '%${keyword2}%')
+						 or upper(writer) like upper( '%${keyword2}%')
+						  or upper(content) like upper( '%${keyword2}%')
+						  or upper(email) like upper( '%${keyword2}%') 
+						   or upper(to_char(reg_date,'YYYY-MM-DD AM HH:MI:SS')) like upper( '%${keyword2}%'))
+					</if>
+					<if test="(keyword1!=null and keyword1.length()>0) or (keyword2!=null and keyword2.length()>0)">
+					 	))
+				</if>  
+			</if>
+			order by group_no desc, print_no asc 
 	</select>
+	
+	<!-- 상세보기 해당 테이블 불러오기 -->
 	<select id= "getBoardDTO" parameterType="int" resultType="com.naver.erp.BoardDTO">
 		select
 			b_no||'' as "b_no",
@@ -94,10 +210,59 @@
 		from board
 		where b_no = #{b_no}
 	</select>
+	
+	<!-- 상세보기 들어가면 조회수 증가시키기 -->
 	<update id="updateReadcount" parameterType="int">
 		update board
 		set
 			readcount = readcount+1
 		where b_no = #{b_no}
 	</update>
-</mapper>
+	
+	<!--  게시판 수정 후 수정행의 적용 개수를 리턴하는 update 선언 -->
+	<update id="updateBoard" parameterType="com.naver.erp.BoardDTO">
+		update board
+		set 
+			subject = #{subject},
+			writer = #{writer},
+			content = #{content},
+			email = #{email}
+		where
+			b_no = #{b_no} and pwd = #{pwd}
+	</update>
+	
+	<!-- 삭제/수정할 게시판의 존재 개수를 리턴하는 select 선언 -->
+	<select id="getBoardCnt" parameterType="com.naver.erp.BoardDTO" resultType="int">
+		select
+			count(*)
+		from board
+		where
+			b_no = #{b_no}
+	</select>
+	
+	<!-- 게시판의 비밀번호 존재 개수를 리턴하는 select 선언 -->
+	<select id="getPwdCnt" parameterType="com.naver.erp.BoardDTO" resultType="int">
+		select count(*) from board where b_no = #{b_no} and pwd = #{pwd}
+	</select>
+	
+	
+	<!--  삭제할 게시판의 아들글 존재 개수를 리턴하는 select 선언 -->
+	<select id ="getSonCnt" parameterType="com.naver.erp.BoardDTO" resultType="int">
+		select count(*) from board
+		where group_no = (select group_no from board where b_no=#{b_no})
+			and print_level =(select print_level+1 from board where b_no=#{b_no})
+			and print_no =(select print_no+1 from board where b_no=#{b_no})
+	</select>
+	
+	<!--  삭제 될 게시판 이후 글의 출력 순서번호를 1씩 감소 시킨 후 수정 적용행의 개수를 리턴하는 update 선언 -->
+	<update id = "upPrintNo" parameterType="com.naver.erp.BoardDTO">
+		update board set print_no=print_no-1
+		where group_no=(select group_no from board where b_no=#{b_no})
+		and print_no > (select print_no from board where b_no=${b_no})
+	</update>
+	
+	<!-- 게시판 삭제 명령한 후 삭제 적용행의 개수를 리턴하는 delete 선언 -->
+	<delete id="deleteBoard" parameterType="com.naver.erp.BoardDTO">
+		delete from board where b_no=#{b_no} and pwd=#{pwd}
+	</delete>
+ </mapper>

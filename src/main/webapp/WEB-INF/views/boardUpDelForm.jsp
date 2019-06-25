@@ -7,7 +7,7 @@
 <%@include file="common.jsp" %>
 <%@include file="checkLogin.jsp" %>
 <%@include file="menubar.jsp"%>
-<script src="/z_jsp/resources/jquery-1.11.0.min.js"></script>
+<script src="/erp/resources/jquery-1.11.0.min.js"></script>
 
 <script>
 	function checkBoardUpDelForm(upDel) {
@@ -63,23 +63,21 @@
 			}
 		}
 		$.ajax({
-			url : "/z_jsp/boardUpDelProc.do",
+			url : "/erp/boardUpDelProc.do",
 			type:"post",
 			data:$("[name=boardUpDelForm]").serialize(),
-			success:function(html){
-				var upDelCnt = $(html).text();
-				upDelCnt=upDelCnt.split(" ").join("");
+			success:function(upDelCnt){
 				if(upDel=="up"){
 					if(upDelCnt==1){
 						alert("수정 성공");
-						location.replace("/z_jsp/boardListForm.do");
+						location.replace("/erp/boardListForm.do");
 					}
 					else if(upDelCnt==0){
 						alert("비밀번호가 잘못 입력 되었습니다.");
 					}
 					else if(upDelCnt==-1){
 						alert("이미 삭제된 게시물입니다.");
-						location.replace("/z_jsp/boardListForm.do");
+						location.replace("/erp/boardListForm.do");
 					}
 					else{
 						alert("서버쪽 DB 연동 실패!");
@@ -89,11 +87,11 @@
 					alert(upDelCnt);
 					if(upDelCnt==1){
 						alert("삭제 성공!");
-						location.replace("/z_jsp/boardListForm.do");
+						location.replace("/erp/boardListForm.do");
 					}
 					else if(upDelCnt==-1){
 						alert("이미 삭제된 글입니다.");
-						location.replace("/z_jsp/boardListForm.do");
+						location.replace("/erp/boardListForm.do");
 					}
 					else if(upDelCnt==-2){
 						alert("비밀번호가 틀립니다..");
@@ -122,7 +120,7 @@
 
 		<center>
 			<form method="post" name="boardUpDelForm"
-				action="/z_jsp/boardUpDelProc.do">
+				action="/erp/boardUpDelProc.do">
 				<b>[글 수정/삭제]</b>
 				<table class="tbcss1" border="1" bordercolor=gray cellspacing="0" cellpadding="5"
 					align="center">
@@ -165,7 +163,7 @@
 			</form>
 
 			<form name="boardListForm" method="post"
-				action="/z_jsp/boardListForm.do"></form>
+				action="/erp/boardListForm.do"></form>
 				<br>
 			<input type="button" value="html정보보기"
 					onClick="print_html_info();">

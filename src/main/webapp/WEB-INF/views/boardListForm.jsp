@@ -204,11 +204,11 @@ $(document).ready(function(){
 				<option value="or">or</option>
 				<option value="and">and</option>
 			</select> <input type="text" name="keyword2"> <input type="checkbox"
-				name="date" id="date1" value="오늘">오늘 <input type="checkbox"
-				name="date" id="date2" value="어제">어제 <input type="button"
+				name="date" id="date1" value="today">오늘 <input type="checkbox"
+				name="date" id="date2" value="yesterday">어제 <input type="button"
 				value="검색" onClick="goSearch();"> <input type="button"
 				value="모두검색" onClick="goSearchAll();"><br>
-				<input type="hidden" name="selectPageNo">
+				<input type="hidden" name="selectPageNo" value="${empty param.selectPageNo?'1':param.selectPageNo}">
 				<select name="rowCntPerPage">
 					<option value="10">10
 					<option value="15">15

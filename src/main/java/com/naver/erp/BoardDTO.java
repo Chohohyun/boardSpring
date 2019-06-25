@@ -44,7 +44,7 @@ public class BoardDTO {
 	public int getReadcount() {
 		return readcount;
 	}
-	public void setReadCount(int readcount) {
+	public void setReadcount(int readcount) {
 		this.readcount = readcount;
 	}
 	public String getContent() {

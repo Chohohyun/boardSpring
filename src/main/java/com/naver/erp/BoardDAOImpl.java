@@ -67,6 +67,23 @@ public class BoardDAOImpl implements BoardDAO{
 		return boardListAllCnt;
 	}
 
+	
+
+	@Override
+	public List<Map<String, String>> getBoardList(BoardSearchDTO boardSearchDTO) {
+
+		List<Map<String, String>> boardList = this.sqlSession.selectList("com.naver.erp.BoardDAO.getBoardList",boardSearchDTO);
+		return boardList;
+	}
+
+	@Override
+	public int getBoardListAllCnt(BoardSearchDTO boardSearchDTO) {
+		int boardListAllCnt = this.sqlSession.selectOne("com.naver.erp.BoardDAO.getBoardListAllCnt",boardSearchDTO);
+		System.out.println(boardListAllCnt+"행 개수");
+		return boardListAllCnt;
+	}
+	
+	
 	public BoardDTO getBoardDTO(int b_no) {
 		System.out.println("getBoardDTO 까진됨");
 		System.out.println(b_no);
@@ -79,5 +96,48 @@ public class BoardDAOImpl implements BoardDAO{
 		int updateReadcount = this.sqlSession.update("com.naver.erp.BoardDAO.updateReadcount",b_no);
 		return updateReadcount;
 	}
+
+	
+	
+	// 삭제/수정할 게시판의 존재 개수를 리턴하는 메소드 선언
+	@Override
+	public int getBoardCnt(BoardDTO boardDTO) {
+		int boardCnt = sqlSession.selectOne("com.naver.erp.BoardDAO.getBoardCnt",boardDTO);
+		return boardCnt;
+	}
+
+	// 삭제할 게시판의 비밀번호 존재 개수를 리턴하는 메소드 선언
+	@Override
+	public int getPwdCnt(BoardDTO boardDTO) {
+		int pwdCnt = sqlSession.selectOne("com.naver.erp.BoardDAO.getPwdCnt",boardDTO);
+		return pwdCnt;
+	}
+
+	
+	// 게시판 수정 후 수정행의 존재 개수를 리턴하는 메소드 선언
+	@Override
+	public int updateBoard(BoardDTO boardDTO) {
+		int updateCnt = sqlSession.update("com.naver.erp.BoardDAO.updateBoard",boardDTO);
+		return updateCnt;
+	}
+
+	@Override
+	public int getSonCnt(BoardDTO boardDTO) {
+		int sonCnt = sqlSession.selectOne("com.naver.erp.BoardDAO.getSonCnt",boardDTO);
+		return sonCnt;
+	}
+
+	@Override
+	public int deleteBoard(BoardDTO boardDTO) {
+		int deleteBoardCnt = sqlSession.delete("com.naver.erp.BoardDAO.deleteBoard",boardDTO);
+		return deleteBoardCnt;
+	}
+
+	@Override
+	public int upPrintNo(BoardDTO boardDTO) {
+		int upPrintNoCnt = sqlSession.delete("com.naver.erp.BoardDAO.upPrintNo",boardDTO);
+		return upPrintNoCnt;
+	}
+
 
 }

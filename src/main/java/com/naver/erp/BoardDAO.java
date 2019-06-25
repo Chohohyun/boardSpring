@@ -16,8 +16,29 @@ public interface BoardDAO {
 
 	int getBoardListAllCnt();
 
+
+	// 검색한 게시판 목록 리턴하는 메소드 선언
+	List<Map<String, String>> getBoardList(BoardSearchDTO boardSearchDTO);
+
+	int getBoardListAllCnt(BoardSearchDTO boardSearchDTO);
+	
+	
 	BoardDTO getBoardDTO(int b_no);
 
 	int updateReadcount(int b_no);
+	
+	
+
+	int getBoardCnt(BoardDTO boardDTO);
+
+	int getPwdCnt(BoardDTO boardDTO);
+
+	int updateBoard(BoardDTO boardDTO);
+
+	int getSonCnt(BoardDTO boardDTO);
+
+	int deleteBoard(BoardDTO boardDTO);
+
+	int upPrintNo(BoardDTO boardDTO);
 
 }

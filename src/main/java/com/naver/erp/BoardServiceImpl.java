@@ -30,8 +30,8 @@ public class BoardServiceImpl implements BoardService{
 		int boardRegCnt = this.boardDAO.insertBoard(boardDTO);
 		return boardRegCnt;
 	}
-	
-	// 로그인하면 나올 게시판 얻어오기
+
+	/*// 로그인하면 나올 게시판 얻어오기
 	public List<Map<String,String>> getBoardList(){
 		List<Map<String,String>> boardList = this.boardDAO.getBoardList();
 		return boardList;
@@ -41,19 +41,91 @@ public class BoardServiceImpl implements BoardService{
 	public int getBoardListAllCnt() {
 		int boardListAllCnt = this.boardDAO.getBoardListAllCnt();
 		return boardListAllCnt;
+	}*/
+
+	// 로그인하면 나올 게시판 얻어오기
+	public List<Map<String,String>> getBoardList(BoardSearchDTO boardSearchDTO){
+		List<Map<String,String>> boardList = this.boardDAO.getBoardList(boardSearchDTO);
+		return boardList;
 	}
-	
+
+	// 로그인하면 출력할 총 갯수
+	public int getBoardListAllCnt(BoardSearchDTO boardSearchDTO) {
+		int boardListAllCnt = this.boardDAO.getBoardListAllCnt(boardSearchDTO);
+		return boardListAllCnt;
+	}
+
+
 	// 상세보기 들어가기
 	public BoardDTO getBoardDTO(int b_no) {
 		BoardDTO boardDTO = this.boardDAO.getBoardDTO(b_no);
-		System.out.println("여긴됐따");
 		if(boardDTO!=null) {
-			System.out.println("여긴 되나?");
 			int readcount = this.boardDAO.updateReadcount(b_no);
-
-			System.out.println("여긴 되나?2");
+			boardDTO.setReadcount(boardDTO.getReadcount()+1);
 		}
 		return boardDTO;
+	}
+
+	@Override
+	public BoardDTO getUpDelBoardDTO(int b_no) {
+		BoardDTO boardDTO = this.boardDAO.getBoardDTO(b_no);
+		return boardDTO;
+	}
+
+	@Override
+	public int updateBoard(BoardDTO boardDTO) {
+		// 수정할 게시판 글의 b_no 데이터 꺼내기
+		int b_no = boardDTO.getB_no();
+		
+		// 수정할 게시판의 존재개수를 BoardDAOImpl 에게 명령한 후 알아내기
+		int boardCnt = this.boardDAO.getBoardCnt(boardDTO);
+		if(boardCnt==0) {
+			return -1;
+		}
+		// 수정할 게시판의 비밀번호 존재 개수를 BoardDAOImpl 에게 명령한 후 알아내기
+		int pwdCnt = this.boardDAO.getPwdCnt(boardDTO);
+		if(pwdCnt==0) {
+			return 0;
+		}
+		// 게시판 수정 명령한 후 수정 적용행의 개수 알아내기
+		int updateCnt = this.boardDAO.updateBoard(boardDTO);
+		return updateCnt;
+	}
+
+	@Override
+	public int deleteBoard(BoardDTO boardDTO) {
+
+		System.out.println("여기까진된다");
+		// 삭제할 게시판의 존재개수를 BoardDAOImpl 에게 명령한 후 알아내기
+		int boardCnt = this.boardDAO.getBoardCnt(boardDTO);
+		if(boardCnt==0) {
+			return -1;
+		}
+
+		System.out.println("여기까진된다");
+		// 삭제할 게시판의 비밀번호 존재 개수를 BoardDAOImpl 에게 명령한 후 알아내기
+		int pwdCnt = this.boardDAO.getPwdCnt(boardDTO);
+		if(pwdCnt==0) {
+			return -2;
+		}
+		System.out.println("여기까진된다");
+		// 삭제할 게시판의 아들글 존재 개수를 BoardDAOImpl 에게 명령한 후 알아내기
+		int sonCnt = this.boardDAO.getSonCnt(boardDTO);
+		if(sonCnt>0) {
+			return -3;
+		}
+		System.out.println("여기까진된다");
+		// 삭제될 게시판 이후 글의 출력 순서 번호를 1씩 감소 시킨 후 수정 적용행의 개수 알아내기 
+		int upPrintNoCnt = this.boardDAO.upPrintNo(boardDTO);
+		
+
+		System.out.println("여기까진된다");
+		// 게시판 삭제 명령한 후 삭제 적용행의 개수 알아내기
+		int deleteCnt = this.boardDAO.deleteBoard(boardDTO);
+
+		System.out.println("여기까진된다");
+		System.out.println(deleteCnt+"delete");
+		return deleteCnt;
 	}
 }
 
