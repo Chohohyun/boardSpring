@@ -208,7 +208,7 @@ $(document).ready(function(){
 				name="date" id="date2" value="yesterday">어제 <input type="button"
 				value="검색" onClick="goSearch();"> <input type="button"
 				value="모두검색" onClick="goSearchAll();"><br>
-				<input type="hidden" name="selectPageNo" value="${empty param.selectPageNo?'1':param.selectPageNo}">
+				<input type="hidden" name="selectPageNo">
 				<select name="rowCntPerPage">
 					<option value="10">10
 					<option value="15">15
