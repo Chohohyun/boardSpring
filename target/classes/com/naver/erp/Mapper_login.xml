@@ -15,4 +15,41 @@
 	<!-- ${키값명} => 키값에 대응하는 데이터를 그대로 삽입 -->
 		select count(*) from admin where admin_id=#{admin_id} and pwd=#{pwd}
 	</select>
+	
+	<insert id="getUserRegCnt" parameterType="com.naver.erp.UserDTO">
+	insert into disability_user(
+		user_no,
+		user_id,
+		user_pwd,
+		user_name,
+		user_gender,
+		user_jumin_num,
+		user_postal_code,
+		user_road_addr,
+		user_jibun_addr,
+		user_detail_addr,
+		user_phone,
+		user_email,
+		disability_grade_code,
+		disability_type_code,
+		wheelchair
+	) values (
+	(select nvl(max(user_no),0)+1 from disability_user), 
+	#{id},
+	#{pwd1},
+	#{name},
+	#{gender},
+	'${jumin_num1}${jumin_num2}',
+	#{postal_code},
+	#{road_addr},
+	#{jibun_addr},
+	#{detail_addr},
+	#{phone},
+	#{email},
+	${disability_type},
+	${disability_grade},
+	${wheelchair}
+	)
+			
+	</insert>
 </mapper>

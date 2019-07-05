@@ -34,4 +34,17 @@ public class LoginDAOImpl implements LoginDAO{
 				admin_id_pwd);
 		return adminCnt;
 	}
+
+
+	@Override
+	public int getUserRegCnt(UserDTO userDTO) {
+		System.out.println(userDTO.getName());
+		System.out.println(userDTO.getId());
+		System.out.println(userDTO.getPwd1());
+		System.out.println(userDTO.getJumin_num1());
+		System.out.println(userDTO.getJumin_num2());
+		int userRegCnt = this.sqlSession.insert("com.naver.erp.LoginDAO.getUserRegCnt",userDTO);
+		System.out.println("잘실행됐네요");
+		return userRegCnt;
+	}
 }

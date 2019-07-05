@@ -6,49 +6,22 @@
 
 <!-- jsp 기술의 한 종류인 include Directive를 이용하여 common.jsp 파일 내의 소스를 삽입하기 -->
 <%@include file="common.jsp" %>
+<html>
 <script>
 	$(document).ready(function() {
 		
-		//$(".admin_id").val("abc");
-		//$(".pwd").val("abc123");
-		inputData("admin_id",'${cookie.admin_id.value}');
-		inputData("pwd",'${cookie.pwd.value}');
 		
-		<c:if test="${!empty cookie.admin_id.value}">
-		inputData("is_login","y")
-		</c:if>
-		
+	
 		$("[name=loginForm] .login").click(function() {
 			checkLoginForm();
 		});
 		//$('[name="loginForm"]').find('. login').click(function(){
 	});
+	function goRegForm(){
+		document.goRegForm.submit();
+	}
 	function checkLoginForm() {
-		// 입력된 아이디를 가져와 변수에 저장
-		var admin_id = $(".admin_id").val();
-		// 아이디를 입력 안했으면 경고하고 함수 중단
-		if (admin_id.split(" ").join("") == "") {
-			$(".admin_id").val("");
-			alert("아이디를 입력하지 않았습니다.");
-			return;
-		}
-
-		// 입력된 비밀번호를 가져와 변수에 저장
-		var pwd = $(".pwd").val();
-		// 비밀번호를 입력 안했으면 경고하고 함수 중단
-		if (pwd.split(" ").join("") == "") {
-			$(".pwd").val("");
-			alert("비밀번호를 입력하지 않았습니다.");
-			return;
-		}
-
-		if (is_empty("login_option")) {
-			alert("로그인할 페이지를 선택해 주십시요");
-			$("[name='login_option']").focus();
-			return;
-		}
-		alert( $('[name="login_option"]:checked').val());
-
+		
 		$.ajax({
 			url:"/erp/loginProc.do",
 			type:"post",
@@ -83,14 +56,11 @@
 							// location.replace 대신 아래 코드를 사용한다.
 					// document.boardListForm.submit();
 
-					if($('[name="login_option"]:checked').val() == 1){
+					
 
 						location.replace("/erp/boardListForm.do");
-					}
-					else{
-
-						location.replace("/erp/contactSearchForm.do");	
-					}
+				
+					
 				}
 				else{
 					alert("로그인 실패!");
@@ -104,39 +74,101 @@
 
 	}
 </script>
-<html>
+	<script src="/erp/resources/vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="/erp/resources/vendor/bootstrap/js/popper.js"></script>
+	<script src="/erp/resources/vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="/erp/resources/vendor/select2/select2.min.js"></script>
+<!--===============================================================================================-->
+	<script src="/erp/resources/vendor/tilt/tilt.jquery.min.js"></script>
+	<script >
+		$('.js-tilt').tilt({
+			scale: 1.1
+		})
+	</script>
+<!--===============================================================================================-->
+	<script src="/erp/resources/js/main.js"></script>
+
+
+<!--===============================================================================================-->
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="/erp/resources/images/icons/favicon.ico"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/erp/resources/vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/erp/resources/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/erp/resources/vendor/animate/animate.css">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="/erp/resources/vendor/css-hamburgers/hamburgers.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/erp/resources/vendor/select2/select2.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/erp/resources/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/erp/resources/css/main.css">
 <title>Insert title here</title>
 </head>
 <body>
+	
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<div class="login100-pic js-tilt" data-tilt>
+					<img src="/erp/resources/images/img-01.png" alt="IMG">
+				</div>
 
-	<center>
-		<form name="loginForm" method="post" action="/erp/loginProc.do">
-			<table class="tbcss1" border=1 cellpadding=20 cellspacing=20>
-				<tr>
-					<th><b>[로그인]</b>
-						<div style="height: 6"></div>
-						<table class="tbcss1" border=1 cellpadding=5 cellspacing=0 bordercolor="gray">
-							<tr>
-								<th bgcolor="${headerColor}" align=center>아이디
-								<td><input type="text" name="admin_id" class="admin_id"
-									size="20">
-							<tr>
-								<th bgcolor="${headerColor}" align=center>암호
-								<td><input type="password" class="pwd" name="pwd" size="20">
-							<tr>
-								<th bgcolor="${headerColor}" align=center>로그인할 페이지
-								<td>
-						<input type="radio" name="login_option" id="login_option1" value="1">게시판
-						<input type="radio" name="login_option" id="login_option2" value="2">연락처
-							
-						</table>
-						<div style="height: 6"></div> <input type="button" value="로그인" class="login">
-							
-						<input type="checkbox" name="is_login" value="y"> 아이디,암호 기억
-			</table>
-		</form>
-	</center>
+				<form name="loginForm" method="post" action="/erp/loginProc.do" class="login100-form validate-form">
+					<span class="login100-form-title">
+						교통약자이동지원센터
+					</span>
+
+					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+						<input class="input100" type="text"  name="admin_id" class="admin_id" placeholder="ID(아이디)">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-envelope" aria-hidden="true"></i>
+						</span>
+					</div>
+
+					<div class="wrap-input100 validate-input" data-validate = "Password is required">
+						<input class="input100" type="password" class="pwd" name="pwd"  placeholder="Password(암호)">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-lock" aria-hidden="true"></i>
+						</span>
+					</div>
+					
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn login">
+							로그인
+						</button>
+					</div>
+
+					<div class="text-center p-t-12">
+						<span class="txt1">
+							Forgot
+						</span>
+						<a class="txt2" href="#">
+							Username / Password?
+						</a>
+					</div>
+
+					<div class="text-center p-t-136">
+						<a class="txt2" href="javascript:goRegForm();">
+							회원가입
+							<i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+						</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	<form name="goRegForm" method="get" action="/erp/goRegForm.do"></form>
+	
 </body>
 </html>

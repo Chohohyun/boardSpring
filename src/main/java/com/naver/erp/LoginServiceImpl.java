@@ -26,4 +26,10 @@ public class LoginServiceImpl implements LoginService{
 		int adminCnt = this.loginDAO.getAdminCnt(admin_id_pwd);
 		return adminCnt;
 	}
+
+	@Override
+	public int getUserRegCnt(UserDTO userDTO) {
+		int userRegCnt = this.loginDAO.getUserRegCnt(userDTO);
+		return userRegCnt;
+	}
 }

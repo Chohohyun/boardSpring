@@ -6,4 +6,6 @@ public interface LoginDAO {
 
 	int getAdminCnt(Map<String, String> admin_id_pwd);
 
+	int getUserRegCnt(UserDTO userDTO);
+
 }
