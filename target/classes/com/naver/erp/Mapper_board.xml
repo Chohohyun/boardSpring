@@ -3,6 +3,61 @@
 <!--  namespace 속성값으로 DAO 인터페이스명이 오며 -->
 <!-- DAO 인터페이스 메소드명과 동일한 id값을 소유한 태그를 내포하고 있다. -->
 <mapper namespace="com.naver.erp.BoardDAO">
+	<sql id ="boardWhere">
+		where 1=1
+		<if test="date!=null"> 
+		
+				and(
+			 	b.group_no in (select group_no from board where
+				<foreach collection="date" item="item" index="index">
+					<if test="index>0">
+						or 
+					</if>
+					<choose>
+						<when test="item.equals('today')">
+					 		to_char(reg_date,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd')
+						</when>
+						<when test="item.equals('yesterday')">
+					 		to_char(reg_date,'yyyy-mm-dd') = to_char(sysdate-1,'yyyy-mm-dd')
+						</when>
+					</choose> 
+				</foreach>
+				))  
+		</if> 
+		<if test="(keyword1!=null and keyword1.length()>0) or  (keyword2!=null and keyword2.length()>0)">
+				and (
+					<choose>
+					<when test="keyword1!=null and keyword1.length()>0">
+						b.group_no in (select group_no from board where (upper(subject) like upper( '%${keyword1}%')
+						 or upper(writer) like upper( '%${keyword1}%') 
+						 or upper(content) like upper( '%${keyword1}%')
+						 or upper(email) like upper( '%${keyword1}%') 
+						 or upper(to_char(reg_date,'YYYY-MM-DD AM HH:MI:SS')) like upper( '%${keyword1}%'))
+						 
+					</when>
+					<when test="keyword2!=null and keyword2.length()>0">
+						 b.group_no in (select group_no from board where
+					</when>
+					
+					</choose>
+					<if test="keyword1!=null and keyword1.length()>0 and  keyword2!=null and keyword2.length()>0">
+						${or_and}
+					</if>
+					<if test="keyword2!=null and keyword2.length()>0">
+						 (upper(subject) like upper( '%${keyword2}%')
+						 or upper(writer) like upper( '%${keyword2}%')
+						  or upper(content) like upper( '%${keyword2}%')
+						  or upper(email) like upper( '%${keyword2}%') 
+						   or upper(to_char(reg_date,'YYYY-MM-DD AM HH:MI:SS')) like upper( '%${keyword2}%'))
+					</if>
+					<if test="(keyword1!=null and keyword1.length()>0) or (keyword2!=null and keyword2.length()>0)">
+					 	))
+				</if>  
+			</if>
+		order by group_no desc,print_no asc
+	</sql>
+
+
 	<update id ="updatePrint_no" parameterType="com.naver.erp.BoardDTO">
 		update board
 		set print_no=print_no+1
@@ -76,58 +131,11 @@
 			print_no||'' as "print_no",
 			print_level||'' as "print_level"
 		from board b
-		where 1=1
-		<if test="date!=null"> 
-				and(
-			 	b.group_no in (select group_no from board where
-				<foreach collection="date" item="item" index="index">
-					<if test="index>0">
-						or 
-					</if>
-					<choose>
-						<when test="item.equals('today')">
-					 		to_char(reg_date,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd')
-						</when>
-						<when test="item.equals('yesterday')">
-					 		to_char(reg_date,'yyyy-mm-dd') = to_char(sysdate-1,'yyyy-mm-dd')
-						</when>
-					</choose> 
-				</foreach>
-				))  
-		</if> 
-		<if test="(keyword1!=null and keyword1.length()>0) or  (keyword2!=null and keyword2.length()>0)">
-				and (
-					<choose>
-					<when test="keyword1!=null and keyword1.length()>0">
-						b.group_no in (select group_no from board where (upper(subject) like upper( '%${keyword1}%')
-						 or upper(writer) like upper( '%${keyword1}%') 
-						 or upper(content) like upper( '%${keyword1}%')
-						 or upper(email) like upper( '%${keyword1}%') 
-						 or upper(to_char(reg_date,'YYYY-MM-DD AM HH:MI:SS')) like upper( '%${keyword1}%'))
-						 
-					</when>
-					<when test="keyword2!=null and keyword2.length()>0">
-						 b.group_no in (select group_no from board where
-					</when>
-					
-					</choose>
-					<if test="keyword1!=null and keyword1.length()>0 and  keyword2!=null and keyword2.length()>0">
-						${or_and}
-					</if>
-					<if test="keyword2!=null and keyword2.length()>0">
-						 (upper(subject) like upper( '%${keyword2}%')
-						 or upper(writer) like upper( '%${keyword2}%')
-						  or upper(content) like upper( '%${keyword2}%')
-						  or upper(email) like upper( '%${keyword2}%') 
-						   or upper(to_char(reg_date,'YYYY-MM-DD AM HH:MI:SS')) like upper( '%${keyword2}%'))
-					</if>
-					<if test="(keyword1!=null and keyword1.length()>0) or (keyword2!=null and keyword2.length()>0)">
-					 	))
-				</if>  
-			</if>
-		order by group_no desc,print_no asc
-		 ) zzz)  where RNUM>= ${selectPageNo} * ${rowCntPerPage} - ${rowCntPerPage} +1 and RNUM &lt;= ${selectPageNo} * ${rowCntPerPage}
-		 
+		<include refid="boardWhere"/>
+		
+		<![CDATA[
+		 ) zzz)  where RNUM>= ${selectPageNo} * ${rowCntPerPage} - ${rowCntPerPage} +1 and RNUM <= ${selectPageNo} * ${rowCntPerPage}
+		 ]]>
 		 
 		 
 		 
@@ -141,56 +149,7 @@
 		select 
 			count(*)
 			from board b
-		 	where 1=1
-		 	<if test="date!=null"> 
-				and(
-			 	b.group_no in (select group_no from board where
-				<foreach collection="date" item="item" index="index">
-					<if test="index>0">
-						or 
-					</if>
-					<choose>
-						<when test="item.equals('today')">
-					 		to_char(reg_date,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd')
-						</when>
-						<when test="item.equals('yesterday')">
-					 		to_char(reg_date,'yyyy-mm-dd') = to_char(sysdate-1,'yyyy-mm-dd')
-						</when>
-					</choose> 
-				</foreach>
-				))  
-			</if> 
-			<if test="(keyword1!=null and keyword1.length()>0) or  (keyword2!=null and keyword2.length()>0)">
-				and (
-					<choose>
-					<when test="keyword1!=null and keyword1.length()>0">
-						b.group_no in (select group_no from board where (upper(subject) like upper( '%${keyword1}%')
-						 or upper(writer) like upper( '%${keyword1}%') 
-						 or upper(content) like upper( '%${keyword1}%')
-						 or upper(email) like upper( '%${keyword1}%') 
-						 or upper(to_char(reg_date,'YYYY-MM-DD AM HH:MI:SS')) like upper( '%${keyword1}%'))
-						 
-					</when>
-					<when test="keyword2!=null and keyword2.length()>0">
-						 b.group_no in (select group_no from board where
-					</when>
-					
-					</choose>
-					<if test="keyword1!=null and keyword1.length()>0 and  keyword2!=null and keyword2.length()>0">
-						${or_and}
-					</if>
-					<if test="keyword2!=null and keyword2.length()>0">
-						 (upper(subject) like upper( '%${keyword2}%')
-						 or upper(writer) like upper( '%${keyword2}%')
-						  or upper(content) like upper( '%${keyword2}%')
-						  or upper(email) like upper( '%${keyword2}%') 
-						   or upper(to_char(reg_date,'YYYY-MM-DD AM HH:MI:SS')) like upper( '%${keyword2}%'))
-					</if>
-					<if test="(keyword1!=null and keyword1.length()>0) or (keyword2!=null and keyword2.length()>0)">
-					 	))
-				</if>  
-			</if>
-			order by group_no desc, print_no asc 
+		<include refid="boardWhere"/>
 	</select>
 	
 	<!-- 상세보기 해당 테이블 불러오기 -->
@@ -255,7 +214,7 @@
 	</select>
 	
 	<!--  삭제 될 게시판 이후 글의 출력 순서번호를 1씩 감소 시킨 후 수정 적용행의 개수를 리턴하는 update 선언 -->
-	<update id = "upPrintNo" parameterType="com.naver.erp.BoardDTO">
+	<update id = "downPrintNo" parameterType="com.naver.erp.BoardDTO">
 		update board set print_no=print_no-1
 		where group_no=(select group_no from board where b_no=#{b_no})
 		and print_no > (select print_no from board where b_no=${b_no})

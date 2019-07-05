@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--  namespace 속성값으로 DAO 인터페이스명이 오며 -->
+<!-- DAO 인터페이스 메소드명과 동일한 id값을 소유한 태그를 내포하고 있다. -->
+<mapper namespace="com.naver.erp.ContactDAO">
+	
+	<!--  조건에 맞는 게시판 가져오기 -->
+	<select id = "getContactList" parameterType="com.naver.erp.ContactSearchDTO" resultType="hashmap">
+			select 
+			*
+		from (select zzz.*, rownum||'' RNUM from (
+		select 
+			d.developer_no "developer_no",
+			d.developer_name "developer_name",
+			decode(substr(d.jumin_num,7,1),'1','남','3','남','여') "gender",
+			(select substr(xmlagg(xmlelement(x,', ',s.skill_name)).extract('//text()'),2) from code_skill s,developer_skill ds where d.developer_no=ds.developer_no and s.skill_code=ds.skill_code) as "skill",
+			(select s.school_name from code_school s where s.school_code = d.school_code) "school_name",
+			(select r.religion_name from code_religion r where r.religion_code = d.religion_code) "religion_name",
+			to_char(d.graduate_date,'YYYY-MM-DD') "graduate_date"
+		from developer d
+		
+		where 1=1
+		
+		
+		<if test="gender!=null"> 
+		
+				and(
+			 	substr(d.jumin_num,7,1) in (
+				<foreach collection="gender" item="item" index="index">
+					<if test="index>0">
+						, 
+					</if>
+					<choose>
+						<when test="item.equals('male')">
+					 		1 ,3
+						</when>
+						<when test="item.equals('female')">
+					 		2 , 4
+						</when>
+					</choose> 
+				</foreach>
+				))  
+		</if> 
+		
+		<if test="religion!=null and religion!=0">
+		
+			and(
+				d.religion_code = ${religion}
+			)
+		
+		</if>
+		
+		
+		<if test="school!=null"> 
+		
+				and(
+			 	d.school_code in (
+				<foreach collection="school" item="item" index="index">
+					<if test="index>0">
+						, 
+					</if>
+						${item}
+				</foreach>
+				))  
+		</if> 
+		
+		
+		<if test="skill!=null"> 
+		
+				and(
+			 	d.developer_no in (select de.developer_no from developer_skill de where de.skill_code in (
+				<foreach collection="skill" item="item" index="index">
+					<if test="index>0">
+						, 
+					</if>
+						${item}
+				</foreach>
+				)))  
+		</if> 
+		
+		<if test="graduate_year1!=null and graduate_year1!=''">
+			and(
+				d.graduate_date - to_date('${graduate_year1}-${graduate_month1}-01','yyyy-mm-dd') >=0
+				)
+		</if>
+		
+		<if test="graduate_year2!=null and graduate_year2!=''">
+			and(
+				 add_months(to_date('${graduate_year2}-${graduate_month2}-01','yyyy-mm-dd'),1)-1 - d.graduate_date >=0
+			)
+		</if>
+		
+		<if test="(keyword!=null and keyword.length()>0)">
+			and (
+						upper(d.developer_name) like upper( '%${keyword}%')
+						 or upper(d.jumin_num) like upper( '%${keyword}%') 
+						 or upper((select r.religion_name from code_religion r where d.religion_code=r.religion_code)) like upper( '%${keyword}%')
+						 )
+		</if>
+		<if test="selectOption!=null and selectOption.length()>0">
+			order by
+			<choose>
+				<when test="selectOption.equals('developer_name') || selectOption.equals('graduate_date')">
+					${selectOption} ${ascDesc}
+				</when>
+				<when test="selectOption.equals('gender')">
+					"gender" ${ascDesc}
+				</when>
+				<when test="selectOption.equals('religion_code')">
+					"religion_name" ${ascDesc}
+				</when>
+				<when test="selectOption.equals('skillOption')">
+					"skill" ${ascDesc}
+				</when>
+			</choose>
+		</if>
+		<![CDATA[
+		 ) zzz)  where RNUM>= ${selectPageNo} * 5 - 5+1 and RNUM <= ${selectPageNo} * 5
+		 ]]>
+	</select>
+	<select id = "getContactListAllCnt" parameterType="com.naver.erp.ContactSearchDTO" resultType="int">
+		select 
+			count(*)
+				from developer d
+				where 1=1
+		
+		
+		<if test="gender!=null"> 
+		
+				and(
+			 	substr(d.jumin_num,7,1) in (
+				<foreach collection="gender" item="item" index="index">
+					<if test="index>0">
+						, 
+					</if>
+					<choose>
+						<when test="item.equals('male')">
+					 		1 ,3
+						</when>
+						<when test="item.equals('female')">
+					 		2 , 4
+						</when>
+					</choose> 
+				</foreach>
+				))  
+		</if> 
+		
+		<if test="religion!=null and religion!=0">
+		
+			and(
+				d.religion_code = ${religion}
+			)
+		
+		</if>
+		
+		
+		<if test="school!=null"> 
+		
+				and(
+			 	d.school_code in (
+				<foreach collection="school" item="item" index="index">
+					<if test="index>0">
+						, 
+					</if>
+						${item}
+				</foreach>
+				))  
+		</if> 
+		
+		
+		<if test="skill!=null"> 
+		
+				and(
+			 	d.developer_no in (select de.developer_no from developer_skill de where de.skill_code in (
+				<foreach collection="skill" item="item" index="index">
+					<if test="index>0">
+						, 
+					</if>
+						${item}
+				</foreach>
+				)))  
+		</if> 
+		
+		<if test="graduate_year1!=null and graduate_year1!=''">
+			and(
+				d.graduate_date - to_date('${graduate_year1}-${graduate_month1}-01','yyyy-mm-dd') >=0
+				)
+		</if>
+		
+		<if test="graduate_year2!=null and graduate_year2!=''">
+			and(
+				 add_months(to_date('${graduate_year2}-${graduate_month2}-01','yyyy-mm-dd'),1)-1 - d.graduate_date >=0
+			)
+		</if>
+		
+		<if test="(keyword!=null and keyword.length()>0)">
+			and (
+						upper(d.developer_name) like upper( '%${keyword}%')
+						 or upper(d.jumin_num) like upper( '%${keyword}%') 
+						 or upper((select r.religion_name from code_religion r where d.religion_code=r.religion_code)) like upper( '%${keyword}%')
+						 )
+		</if>
+	</select>
+	
+	<insert id="insertContact" parameterType="com.naver.erp.ContactDTO">
+		insert into developer(
+		developer_no,
+		developer_name,
+		jumin_num,
+		school_code,
+		religion_code,
+		graduate_date
+		) values(
+		(select nvl(max(developer_no),0)+1 from developer),
+		#{dev_name},
+		'${jumin_num1}${jumin_num2}',
+		${school},
+		${religion},
+		to_date('${graduate_year1}-${graduate_month1}-${graduate_day1}','yyyy-mm-dd')
+		)
+	</insert>
+	
+	<insert id="insertSkill"  parameterType="com.naver.erp.ContactDTO">
+	insert all
+		<foreach collection="skill" item="item" index="index" > 
+
+		
+		into developer_skill(
+			developer_skill_no,
+			developer_no,
+			skill_code
+		)values(
+		(select nvl(max(developer_skill_no),0)+${index}+1 from developer_skill),
+		(select max(developer_no) from developer),
+		${item}
+		)
+		
+		</foreach>
+	select * from DUAL
+		
+	</insert>
+	<select id= "getContactDTO" parameterType="int" resultType="com.naver.erp.ContactDTO">
+		select
+			developer_no||'' as "dev_no",
+			developer_name||'' as "dev_name",
+			substr(jumin_num,1,6)||'' as "jumin_num1",
+			substr(jumin_num,7,7)||'' as "jumin_num2",
+			school_code||'' as "school",
+			religion_code||'' as "religion",
+			extract(year from graduate_date)||'' as "graduate_year1",
+			extract(month from graduate_date)||'' as "graduate_month1",
+			extract(day from graduate_date)||'' as "graduate_day1"
+		from developer
+		where developer_no = #{developer_no}
+	</select>
+	
+	<select id="getSkill" parameterType="int" resultType="String">
+		select
+			skill_code as "skill"
+		from developer_skill
+		where developer_no = #{developer_no}
+	</select>
+	<select id="getContactCnt"  parameterType="com.naver.erp.ContactDTO" resultType="int">
+		select
+			*
+		from developer
+		where developer_no = #{dev_no}
+	
+	</select>
+	<update id ="updateCnt" parameterType="com.naver.erp.ContactDTO">
+		update developer
+		set 
+			developer_name = #{dev_name},
+			jumin_num = '${jumin_num1}${jumin_num2}',
+			school_code=${school},
+			religion_code=${religion},
+			graduate_date=to_date('${graduate_year1}-${graduate_month1}-${graduate_day1}','yyyy-mm-dd')
+		where
+			developer_no = #{dev_no}
+	</update>
+	
+	<delete id ="skillDelCnt" parameterType="com.naver.erp.ContactDTO">
+		delete from developer_skill where developer_no=#{dev_no}
+	</delete>
+	
+	<insert id ="skillUpCnt" parameterType="com.naver.erp.ContactDTO">
+	insert all
+		<foreach collection="skill" item="item" index="index" > 
+
+		
+		into developer_skill(
+			developer_skill_no,
+			developer_no,
+			skill_code
+		)values(
+		(select nvl(max(developer_skill_no),0)+${index}+1 from developer_skill),
+		${dev_no},
+		${item}
+		)
+		
+		</foreach>
+		select * from DUAL
+		
+	</insert>
+	<delete id="contactDelCnt" parameterType="com.naver.erp.ContactDTO">
+		delete from developer where developer_no=#{dev_no}
+	</delete>
+	</mapper>

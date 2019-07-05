@@ -95,6 +95,8 @@ public class LoginController {
 	@ResponseBody
 	public int loginProc(
 			HttpSession session,HttpServletResponse response,
+			// 파리미터명, 파라미터값이 저장된 HashMap 객체를 받아오는 매개변수 선언
+			// 파라미터명은 키값으로 파라미터 값으로는 키값에 대응하는 저장 문자열 HashMap 객체 저장된다.
 			@RequestParam Map<String,String> paramsMap
 			) {
 		int admin_idCnt=0;
@@ -103,34 +105,38 @@ public class LoginController {
 			admin_idCnt = this.loginService.getAdminCnt(paramsMap);
 			if(admin_idCnt==1) {
 				session.setAttribute("admin_id", paramsMap.get("admin_id"));
-			}
-			if(paramsMap.get("is_login")==null) {
-				// Cookie 객체 생성하고 쿠키명 cookie, 쿠기값 null로 설정
-				/*Cookie cookie1 = new Cookie("admin_id",null);
-				cookie1.setMaxAge(0);
-				response.addCookie(cookie1);
-				Cookie cookie2 = new Cookie("pwd",null);
-				cookie2.setMaxAge(0);
-				response.addCookie(cookie2);*/
-				
-				Util.addCookie(response, "admin_id", null, 0);
-				Util.addCookie(response, "pwd", null, 0);
-			}
-			else {
-				// Cookie 객체 생성하고 쿠키명 admin_id, 쿠기값 admin_id, 수명 60*60*24로 설정
-				/*Cookie cookie1 = new Cookie("admin_id",admin_id);
-				cookie1.setMaxAge(60*60*24);
-				response.addCookie(cookie1);
-				
-				// Cookie 객체 생성하고 쿠키명 pwd, 쿠기값 pwd, 수명 60*60*24로 설정
-				Cookie cookie2 = new Cookie("pwd",pwd);
-				cookie2.setMaxAge(60*60*24);
-				response.addCookie(cookie2);*/
-				
+				// 아이디 암호 저장의사가 없을경우
+				// 아이디 암호 저장한 Cookies 객체 생성하고 쿠키값을 null로 덮어 씌우고 수명 없애기
+				// 그리고 이 쿠키를 HttpServletRequest 객체에 저장하기
+				if(paramsMap.get("is_login")==null) {
+					// Cookie 객체 생성하고 쿠키명 cookie, 쿠기값 null로 설정
+					/*Cookie cookie1 = new Cookie("admin_id",null);
+					cookie1.setMaxAge(0);
+					response.addCookie(cookie1);
+					Cookie cookie2 = new Cookie("pwd",null);
+					cookie2.setMaxAge(0);
+					response.addCookie(cookie2);*/
+					
+					Util.addCookie(response, "admin_id", null, 0);
+					Util.addCookie(response, "pwd", null, 0);
+				}
+				else {
+					// Cookie 객체 생성하고 쿠키명 admin_id, 쿠기값 admin_id, 수명 60*60*24로 설정
+					/*Cookie cookie1 = new Cookie("admin_id",admin_id);
+					cookie1.setMaxAge(60*60*24);
+					response.addCookie(cookie1);
+					
+					// Cookie 객체 생성하고 쿠키명 pwd, 쿠기값 pwd, 수명 60*60*24로 설정
+					Cookie cookie2 = new Cookie("pwd",pwd);
+					cookie2.setMaxAge(60*60*24);
+					response.addCookie(cookie2);*/
+					
 
-				Util.addCookie(response, "admin_id",paramsMap.get("admin_id") , 60*60*24);
-				Util.addCookie(response, "pwd", paramsMap.get("pwd"), 60*60*24);
+					Util.addCookie(response, "admin_id",paramsMap.get("admin_id") , 60*60*24);
+					Util.addCookie(response, "pwd", paramsMap.get("pwd"), 60*60*24);
+				}
 			}
+			
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("LoginController.loginProc(~) 에서 에러 발생");

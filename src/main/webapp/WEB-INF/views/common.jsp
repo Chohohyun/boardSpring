@@ -21,3 +21,5 @@
 <c:set var="mouseOverColor" value="#D0E0F4"/>
 
 <script src="/erp/resources/common.js?ver=<%=Math.random()%>"></script>
+
+${warning}

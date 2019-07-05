@@ -42,6 +42,13 @@
 			return;
 		}
 
+		if (is_empty("login_option")) {
+			alert("로그인할 페이지를 선택해 주십시요");
+			$("[name='login_option']").focus();
+			return;
+		}
+		alert( $('[name="login_option"]:checked').val());
+
 		$.ajax({
 			url:"/erp/loginProc.do",
 			type:"post",
@@ -65,7 +72,25 @@
 			success:function(data){
 				if(data==1){
 					alert("로그인 성공!");
-					location.replace("/erp/boardListForm.do");
+/* 
+					 만약 post 방식으로 "erp/boardListForm.do 에 접근하고 싶다면?
+							
+					 POST 방식으로 보내려고 할 때 여기에 폼 하나 만들고 폼을 SUBMIT 
+					
+						<form name="boardListForm" method="post" action="/erp/boardListForm.do">
+						</form>  */
+							// body태그 하단에 폼태그를 선언하고
+							// location.replace 대신 아래 코드를 사용한다.
+					// document.boardListForm.submit();
+
+					if($('[name="login_option"]:checked').val() == 1){
+
+						location.replace("/erp/boardListForm.do");
+					}
+					else{
+
+						location.replace("/erp/contactSearchForm.do");	
+					}
 				}
 				else{
 					alert("로그인 실패!");
@@ -100,8 +125,15 @@
 							<tr>
 								<th bgcolor="${headerColor}" align=center>암호
 								<td><input type="password" class="pwd" name="pwd" size="20">
+							<tr>
+								<th bgcolor="${headerColor}" align=center>로그인할 페이지
+								<td>
+						<input type="radio" name="login_option" id="login_option1" value="1">게시판
+						<input type="radio" name="login_option" id="login_option2" value="2">연락처
+							
 						</table>
 						<div style="height: 6"></div> <input type="button" value="로그인" class="login">
+							
 						<input type="checkbox" name="is_login" value="y"> 아이디,암호 기억
 			</table>
 		</form>

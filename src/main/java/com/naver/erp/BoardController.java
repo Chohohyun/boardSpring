@@ -3,10 +3,12 @@ package com.naver.erp;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,6 +34,18 @@ public class BoardController {
 	// <dependency><groupId>javax.inject</groupId><artifactId>javax.inject</artifactId><version>1</version></dependency>
 	@Autowired
 	private BoardService boardService;
+	
+	
+	// BoardController 클래스 내부의 @RequestMapping(~)이 붙은
+	// 모든 메소드가 호출되기 전에 자동으로 호출되는 메소드 선언
+	// 	반드시 @ModelAttribute("키값명")이 붙어야함
+	
+	// @ModelAttribute("키값명")이 붙는 메소드가 리턴하는 데이터는
+	// @RequestMapping(~)이 붙은 메소드 호출 후에 이동하는 JSP 페이지명에서 ${키값명}으로 꺼낼 수 있다.
+	@ModelAttribute("warning")
+	public String gogo() {
+		return "허걱";
+	}
 
 	/*	@RequestMapping(value="/boardListForm.do")
 	public ModelAndView getBoardList() {
@@ -49,8 +63,16 @@ public class BoardController {
 		return mav;
 	}
 	 */
+	// 가상주소 /boardListForm.do로 접근하면 호출되는 메소드 선언
+	//  @RequestMapping 내부에, method=RequestMethod.POST가 없으으므로
+	//  가상주소 /boardListForm.do로 접근 시 get 또는 post방식 접근 모두 가능하다.
 	@RequestMapping(value="/boardListForm.do")
 	public ModelAndView getBoardList(
+			// 파라미터값을 저장할 BoardSearchDTO 객체를 매개변수로 선언
+				// 매개변수로 DTO 객체를 선언하면 파라미터명과 일치하는 속성변수에 파라미터값이 자동으로 저장된다.
+				// 매개변수로 선언된 DTO는 HttpServletRequest 객체에 setAttribute로 저장되므로
+				// 추후 이동하는 JSP 페이지에 ${requestScope.키명} 으로 꺼낼 수 있다.
+				// 이 때 키값은 객체명 맨 앞 영문을 소문자로 고친 문자열이 키값이 된다.
 			BoardSearchDTO boardSearchDTO,HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardListForm.jsp");
@@ -70,12 +92,12 @@ public class BoardController {
 			// Session 객체에 파라미터 값을 저장하기
 			if(uri ==null || uri.equals("boardListForm")) {		
 
-				session.setAttribute("keyword1",boardSearchDTO.getKeyword1());
+				session.setAttribute("boardSearchDTO",boardSearchDTO);/*
 				session.setAttribute("keyword2",boardSearchDTO.getKeyword2());
 				session.setAttribute("date",boardSearchDTO.getDate());
 				session.setAttribute("or_and",boardSearchDTO.getOr_and());
 				session.setAttribute("rowCntPerPage",boardSearchDTO.getRowCntPerPage());
-				session.setAttribute("selectPageNo",boardSearchDTO.getSelectPageNo());
+				session.setAttribute("selectPageNo",boardSearchDTO.getSelectPageNo());*/
 
 			}
 
@@ -83,18 +105,7 @@ public class BoardController {
 			// 전에 들렸던 클래스가 boardListForm이 아니라면
 			// Session 객체에서 파라미터값 꺼내서 저장하기
 			else {
-				System.out.println("여기 실행1");
-				boardSearchDTO.setKeyword1((String)session.getAttribute("keyword1"));
-				System.out.println("여기 실행2");
-				boardSearchDTO.setKeyword2((String)session.getAttribute("keyword2"));
-				System.out.println("여기 실행3");
-				boardSearchDTO.setDate((String[])session.getAttribute("date"));
-				System.out.println("여기 실행4");
-				boardSearchDTO.setOr_and((String)session.getAttribute("or_and"));
-				System.out.println("여기 실행5");
-				boardSearchDTO.setRowCntPerPage((int)session.getAttribute("rowCntPerPage"));
-				System.out.println("여기 실행6");
-				boardSearchDTO.setSelectPageNo((int) session.getAttribute("selectPageNo"));
+				boardSearchDTO = (BoardSearchDTO) session.getAttribute("boardSearchDTO");
 				System.out.println("여기 실행7");
 			}
 			session.setAttribute("uri","boardListForm");
@@ -234,5 +245,12 @@ public class BoardController {
 			return -10;
 		}
 		return boardUpDelCnt;
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public String handleException( HttpServletRequest request) {
+		request.setAttribute("msg",request.getRequestURL()+ "접속 시 에러 발생 했음");
+		
+		return "error.jsp";
 	}
 }

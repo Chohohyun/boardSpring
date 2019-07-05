@@ -8,6 +8,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+// BoardService 인터페이스 틀인 BoardServiceImpl 클래스 선언하기
+// 스프링에서 관용적으로 서비스클래스 이름은 xxxServiceImpl 클래스가 된다.
+// 스프링에서 서비스클래스 역할은 컨트롤러 클래스로부터 받은 db연동 지시를 세분화하여
+// DAO 클래스에게 지시를 내린다. 이때 DB연동 지시들에 트랜잭션을 건다.
+// 스프링에서 서비스클래스의 메소드에서 예외처리가 없는 상태에서 try~catch구문이 없는 상태
+// 예외가 발생하면 이 메소드를 컨트롤러 클래스에게 예외를 처리하라고 집어 던진다.
+// 메소드 뒤 통수에 throws 예외처리객체명이 없으면 알아서 스프링이 붙여준다.
+
+// <문> 자바에서 throw 와 throws 문법 설명하면?
+
+
+
+
 // 서비스 클래스인 BoardServiceImpl 클래스 선언
 // 서브스 클래스에는 @Service 와 @Transcational를 붙인다.
 // @Service => 서비스 클래스 임을 지정하고 bean 태그로 자동 등록된다.
@@ -100,7 +113,7 @@ public class BoardServiceImpl implements BoardService{
 		int boardCnt = this.boardDAO.getBoardCnt(boardDTO);
 		if(boardCnt==0) {
 			return -1;
-		}
+		}                       
 
 		System.out.println("여기까진된다");
 		// 삭제할 게시판의 비밀번호 존재 개수를 BoardDAOImpl 에게 명령한 후 알아내기
@@ -116,7 +129,7 @@ public class BoardServiceImpl implements BoardService{
 		}
 		System.out.println("여기까진된다");
 		// 삭제될 게시판 이후 글의 출력 순서 번호를 1씩 감소 시킨 후 수정 적용행의 개수 알아내기 
-		int upPrintNoCnt = this.boardDAO.upPrintNo(boardDTO);
+		int PrintNoCnt = this.boardDAO.downPrintNo(boardDTO);
 		
 
 		System.out.println("여기까진된다");

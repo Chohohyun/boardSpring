@@ -53,8 +53,8 @@ $(document).ready(function(){
 	$(".pagingNumber").html(
 		getPagingNumber(
 		"${requestScope.boardListAllCnt}", // 검색 결과 총 행 개수
-		"${sessionScope.selectPageNo}", // 선택된 현재 페이지 번호
-		"${sessionScope.rowCntPerPage}", // 페이지 당 출력행의 개수
+		"${sessionScope.boardSearchDTO.selectPageNo}", // 선택된 현재 페이지 번호
+		"${sessionScope.boardSearchDTO.rowCntPerPage}", // 페이지 당 출력행의 개수
 		"10", // 페이지 당 보여줄 페이징번호 개수
 		"goSearch();" // 페이지 번호 클릭 실행할 자스 코드
 		)
@@ -110,14 +110,14 @@ $(document).ready(function(){
 	// </c:forEach>
 	 
 	// 검색 조건 흔적 남기기 2
-	inputData("keyword1","${sessionScope.keyword1}");
-	inputData("keyword2","${sessionScope.keyword2}");
-	inputData("or_and","${sessionScope.or_and}");
-	<c:forEach items="${sessionScope.date}" var="date">
+	inputData("keyword1","${sessionScope.boardSearchDTO.keyword1}");
+	inputData("keyword2","${sessionScope.boardSearchDTO.keyword2}");
+	inputData("or_and","${sessionScope.boardSearchDTO.or_and}");
+	<c:forEach items="${sessionScope.boardSearchDTO.date}" var="date">
 	inputData("date","${date}");
 	</c:forEach>
-	inputData("selectPageNo","${sessionScope.selectPageNo}");
-	inputData("rowCntPerPage","${sessionScope.rowCntPerPage}");
+	inputData("selectPageNo","${sessionScope.boardSearchDTO.selectPageNo}");
+	inputData("rowCntPerPage","${sessionScope.boardSearchDTO.rowCntPerPage}");
 	 
 	
 	
@@ -247,7 +247,7 @@ $(document).ready(function(){
 						varStatus="loopTagStatus">
 						<tr style="cursor: pointer"
 							onClick="goBoardContentForm(${board.b_no});">
-							<td>${requestScope.boardListAllCnt-((sessionScope.selectPageNo-1)*sessionScope.rowCntPerPage)-loopTagStatus.index}
+							<td>${requestScope.boardListAllCnt-((sessionScope.boardSearchDTO.selectPageNo-1)*sessionScope.boardSearchDTO.rowCntPerPage)-loopTagStatus.index}
 							<td><c:if test="${board.print_level>0}">
 									<c:forEach begin="0" end="${board.print_level}">
 							&nbsp;&nbsp;&nbsp;
@@ -264,15 +264,12 @@ $(document).ready(function(){
 		${requestScope.boardListAllCnt==0?'검색된 글이 없습니다.' : ''} 
 		<form name="boardRegForm" method="post" action="/erp/boardRegForm.do">
 		
-			</form> 
+		</form> 
 		<!--  상세보기 폼 -->
-		<form name="boardContentForm" method="post"
-			action="/erp/boardContentForm.do">
+		<form name="boardContentForm" method="post" action="/erp/boardContentForm.do">
 			 
 			<input type="hidden" name="b_no">
-
 		</form>
-
 	</center>
 </body>
 </html>

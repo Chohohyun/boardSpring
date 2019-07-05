@@ -39,6 +39,6 @@ public interface BoardDAO {
 
 	int deleteBoard(BoardDTO boardDTO);
 
-	int upPrintNo(BoardDTO boardDTO);
+	int downPrintNo(BoardDTO boardDTO);
 
 }

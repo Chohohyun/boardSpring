@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 @Repository
 public class BoardDAOImpl implements BoardDAO{
 	
+	
+	private String path = "com.naver.erp.BoardDAO";
 	// SqlSessionTemplate 객체를 생성해 속변 sqlSession 에 저장
 
 		// Autowired의 역할 => 속성변수에 붙은 자료형인 인터페이스를 구현한 클래스를 객체화하여 저장한다.
@@ -85,8 +87,12 @@ public class BoardDAOImpl implements BoardDAO{
 	
 	
 	public BoardDTO getBoardDTO(int b_no) {
+		// 1개 게시판 글 정보 얻기
+		
+		
 		System.out.println("getBoardDTO 까진됨");
 		System.out.println(b_no);
+		// <주의> selectOne 사용 시 리턴되는 데이터는 꼭 1행 n열 이어야 한다.
 		BoardDTO boardDTO = this.sqlSession.selectOne("com.naver.erp.BoardDAO.getBoardDTO",b_no);
 		System.out.println("getBoardDTO 까진됨2");
 		return boardDTO;
@@ -134,9 +140,9 @@ public class BoardDAOImpl implements BoardDAO{
 	}
 
 	@Override
-	public int upPrintNo(BoardDTO boardDTO) {
-		int upPrintNoCnt = sqlSession.delete("com.naver.erp.BoardDAO.upPrintNo",boardDTO);
-		return upPrintNoCnt;
+	public int downPrintNo(BoardDTO boardDTO) {
+		int downPrintNoCnt = sqlSession.delete("com.naver.erp.BoardDAO.downPrintNo",boardDTO);
+		return downPrintNoCnt;
 	}
 
 

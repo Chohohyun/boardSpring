@@ -258,6 +258,7 @@ function getPagingNumber(
 	// name=nowPage을 가진 hidden 태그없으면 경고하고 중지하는 자바스크립트 소스 생성해 저장
 	//--------------------------------------------------------------
 	$(document).ready(function( ){
+		
 		if( $('[name=selectPageNo]').length==0 ){
 			alert("name=nowPage 을 가진 hidden 태그가 있어야 가능함.');" );
 		}
